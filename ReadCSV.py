@@ -1,6 +1,6 @@
 import csv
 import random
-def CreateQuestion(readCSV,updateCSV):
+def CreateQuestion(readCSV,removeCSV):
     questionList = []
     
     try:
@@ -22,7 +22,7 @@ def CreateQuestion(readCSV,updateCSV):
                 for i in questionList:
                     writer.writerow(i)
 
-            with open( updateCSV, "a",encoding="utf-8",newline='' ) as Update_CSV:
+            with open( removeCSV, "a",encoding="utf-8",newline='' ) as Update_CSV:
                 update = csv.writer(Update_CSV)
                 update.writerow(RandomQue)
             return RandomQue
