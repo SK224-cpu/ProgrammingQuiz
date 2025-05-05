@@ -24,3 +24,5 @@ def Consolidated():
     f"Q3. {question3}\n"
     "Good Luck!"
 )
+
+
