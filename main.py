@@ -29,20 +29,14 @@ def Consolidated():
     "Good Luck!"
 )
 
-# s = smtplib.SMTP('smtp.gmail.com',587)
-# s.starttls()
-# s.login("sktest052025@gmail.com","admin123#")
-# message =   Consolidated()
-# s.sendmail("sktest052025@gmail.com","shrutikhonde412@gmail.com",message)
-# s.quit()
-
 # import smtplib, ssl
 config = ConfigParser()
 config.read('configuration.ini')
 smtp_server = config['EMAIL']['smtp_server']
 port = config['EMAIL']['port']
-sender_email = config['EMAIL']['sender_email']
+login = config['EMAIL']['login']
 password = config['EMAIL']['password']
+sender_email = config['EMAIL']['sender_email']
 
 # Create a secure SSL context
 context = ssl.create_default_context()
@@ -53,14 +47,14 @@ try:
     server.ehlo() # Can be omitted
     server.starttls(context=context) # Secure the connection
     server.ehlo() # Can be omitted
-    server.login(sender_email, password)
+    server.login(login, password)
     message =   Consolidated()
-    msg = EmailMessage()
+    msg = EmailMessage() 
     msg['Subject'] = f"{datetime.datetime.now().date()} Quiz\n"
     msg['From'] = sender_email
     msg['To'] = "shrutikhonde412@gmail.com"
     msg.set_content(message)
-    server.send_message(msg,"sktest052025@gmail.com","shrutikhonde412@gmail.com")
+    server.send_message(msg,sender_email,"shrutikhonde412@gmail.com")
 except Exception as e:
     # Print any error messages to stdout
     print(e)
