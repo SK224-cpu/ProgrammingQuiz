@@ -67,8 +67,8 @@ def generate_email_html_N_plaintext(name, question_sources):
     for desc, idx, question in question_sources:
         questions_html += f"""
         <li style="margin-bottom: 15px;">
-            <strong style="color: #2c3e50;">{desc}</strong><br>
-            <span style="color: #333;">Q{idx}: {question}</span>
+            {desc}<br>
+            <b style="color: #333;">Q{idx}: {question}</b>
         </li>"""
 
     htmlEmailMessage = f"""
@@ -85,7 +85,10 @@ def generate_email_html_N_plaintext(name, question_sources):
         <img src="https://i.ibb.co/p6TN9GYb/programming-quiz-header.png" alt="Programming Quiz Banner" style="width: 100%; border-radius: 8px; margin-bottom: 20px;">
 
         <h2 style="color: #2c3e50;">Hey {name},</h2>
-        <b style="font-size: 14px; color: #777; margin-top: -10px;">{datetime.date.today}</b>  
+        <div style="font-size: 18px; color: #333; margin-bottom: 20px;">
+            <b style="font-size: 18px; color: #333;">Today: {datetime.date.today().strftime("%B %d, %Y")}</b>  <br>
+            <b style="font-size: 18px; color: #333;">Deadline: { (datetime.date.today() + datetime.timedelta(days=1)).strftime("%B %d, %Y")}</b>  
+        </div>
          {message}
         <hr style="margin: 30px 0;">
         <h3 style="color: #2c3e50;">Here are your questions:</h3>
@@ -99,8 +102,3 @@ def generate_email_html_N_plaintext(name, question_sources):
     soup = BeautifulSoup(htmlEmailMessage, "html.parser")
     plainEmailMessage = soup.get_text()
     return (htmlEmailMessage, plainEmailMessage)
-
-
-
-# html = generate_email_html("Shruti", question_sources)
-# print(html[0])
