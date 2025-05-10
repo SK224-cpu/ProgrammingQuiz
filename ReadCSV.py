@@ -29,9 +29,9 @@ def CreateQuestion(readCSV,removeCSV):
         else:
             return "No Questions in the List"
     except FileNotFoundError:
-        return("Check file name!")
+        print("Check file name!")
     except Exception:
-        return("Check files, access, priviledge...")
+        print("Check files, access, priviledge...")
         
 
 
