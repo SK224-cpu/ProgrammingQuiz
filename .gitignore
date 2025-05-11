@@ -175,3 +175,6 @@ cython_debug/
 
 # CSV file
 *.csv
+
+#ini file
+*.ini

@@ -1,64 +1,24 @@
-from ReadCSV import CreateQuestion
-import datetime
-import smtplib, ssl
-from configparser import ConfigParser
-from email.message import EmailMessage
+from CreateQuiz import GenerateQuiz
+from EmailTemplateHTML import generate_email_html_N_plaintext
+from SendEmail import SendEmail
+import sys
 
-def Consolidated():
-    #calling Q1
-    readCSV_Coding_test ="data/csv_text_csv.csv"
-    removeCSV_Coding_test = "data/RemovedQuestions/"
-    question1=CreateQuestion(readCSV_Coding_test, removeCSV_Coding_test)
-
-    #calling Q2
-    readCSV_Concepts_test ="data/Programming_Test.csv"
-    removeCSV_Concepts_test ="data/RemovedQuestions/programming_quiz.csv"
-    question2=CreateQuestion(readCSV_Concepts_test, removeCSV_Concepts_test)
-
-    #calling Q3
-    readCSV_Quiz_test ="data/Coding_quiz.csv"
-    removeCSV_Quiz_test ="data/RemovedQuestions/removed_coding_quiz.csv"
-    question3 = CreateQuestion(readCSV_Quiz_test, removeCSV_Quiz_test)
-
-    return (
+def SendQuizToSubscribers(name, emailId):
+    concept_descp = "<div style='margin-bottom: 20px;'><h4 style='color: #2c3e50;'>🧠 Concept Mastery</h4><p style='font-size: 16px; color: #333;'>Explain the concept given below in your own words. Include real-world scenarios where this concept can be applied, and demonstrate its use with a simple code example. This will help you internalize how and when to use the concept effectively.</p></div>"
+    traceCode_descp = "<div style='margin-bottom: 20px;''><h4 style='color: #2c3e50;'>🔍 Trace the Code</h4><p style='font-size: 16px; color: #333;'>Review the given code snippet carefully. Analyze how it runs, and try to predict its final output <strong>without running it</strong>. This sharpens your logic and debugging skills, which are essential for all developers.</p></div>"
+    solveNCode_descp = '<div style="margin-bottom: 20px;"><h4 style="color: #2c3e50;">💡 Solve &amp; Code</h4><p style="font-size: 16px; color: #333;">Read the problem statement thoroughly and write a Python program that solves it. Focus on correct logic, clean structure, and test your solution with different inputs. This helps you become a confident problem solver.</p></div>'
+    question_sources = [
+        ("ProgrammingConceptsRevision.csv","ProgrammingConceptsRevisionRemoved.csv",concept_descp),
+        ("programmingquiz.csv","programmingquizRemoved.csv",traceCode_descp),
+        ("ProgrammingTasks.csv","ProgrammingTasksRemoved.csv",solveNCode_descp)
+        ]
+    quizQuestions = GenerateQuiz(question_sources)
+    quizEmailTemplate = generate_email_html_N_plaintext(name, quizQuestions)
+    SendEmail(quizEmailTemplate[0], quizEmailTemplate[1], emailId)
+    print("Quiz sent successfully!")
     
-    f"Today's {datetime.datetime.now().date()} question paper:\n"
-    f"Q1. {question1}\n"
-    f"Q2. {question2}\n"
-    f"Q3. {question3}\n"
-    "Good Luck!"
-)
-
-# import smtplib, ssl
-config = ConfigParser()
-config.read('configuration.ini')
-smtp_server = config['EMAIL']['smtp_server']
-port = config['EMAIL']['port']
-login = config['EMAIL']['login']
-password = config['EMAIL']['password']
-sender_email = config['EMAIL']['sender_email']
-
-# Create a secure SSL context
-context = ssl.create_default_context()
-
-# Try to log in to server and send email
-try:
-    server = smtplib.SMTP(smtp_server,port)
-    server.ehlo() # Can be omitted
-    server.starttls(context=context) # Secure the connection
-    server.ehlo() # Can be omitted
-    server.login(login, password)
-    message =   Consolidated()
-    msg = EmailMessage() 
-    msg['Subject'] = f"{datetime.datetime.now().date()} Quiz\n"
-    msg['From'] = sender_email
-    msg['To'] = "shrutikhonde412@gmail.com"
-    msg.set_content(message)
-    server.send_message(msg,sender_email,"shrutikhonde412@gmail.com")
-except Exception as e:
-    # Print any error messages to stdout
-    print(e)
-finally:
-    server.quit()
-
-
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: python main.py <name> <email>")
+        sys.exit(1)
+    SendQuizToSubscribers(sys.argv[1], sys.argv[2])
